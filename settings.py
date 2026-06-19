@@ -1,11 +1,25 @@
+import pygame
+
+
 class Settings:
     """存储游戏<<太空鲨入侵>> 中所有设置的类"""
 
     def __init__(self):
         """初始化游戏的静态设置"""
         # 屏幕设置
-        self.screen_width = 1080
-        self.screen_height = 1350
+        info = pygame.display.Info()
+        monitor_height = info.current_h
+
+        # 动态计算分辨率
+        # 如果玩家屏幕高度大于 1440
+        if monitor_height > 1440:
+            self.screen_height = 1350
+            self.screen_width = 1080
+        else:
+            # 否则自动降级为适合笔记本大屏幕的尺寸（比如高度占屏幕的 80%）
+            # 保持 4:5 的比例：宽 = 高 * 0.8
+            self.screen_height = int(monitor_height * 0.8)
+            self.screen_width = int(self.screen_height * 0.8)
         self.bg_color = (230, 230, 230)
         # 飞船的设置
         self.ship_limit = 3
