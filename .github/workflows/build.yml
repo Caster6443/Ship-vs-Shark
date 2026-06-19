@@ -1,0 +1,67 @@
+name: 自动编译并发布游戏发行版
+
+on:
+  release:
+    types: [published] # 点击发布 Release 时触发
+
+permissions:
+  contents: write # 赋予该脚本往 Release 页面上传文件的权限
+
+jobs:
+  build-and-release:
+    name: 在 ${{ matrix.os }} 上打包
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            sep: ';'        # Windows 下 PyInstaller 资源分隔符是分号
+            output_name: 'Ship-vs-Shark-Windows.exe'
+            file_to_upload: 'dist/Ship-vs-Shark-Windows.exe'
+          - os: ubuntu-latest
+            sep: ':'        # Linux 下 PyInstaller 资源分隔符是冒号
+            output_name: 'Ship-vs-Shark-Linux'
+            file_to_upload: 'dist/Ship-vs-Shark-Linux.tar.gz'
+
+    steps:
+    # 1. 拉取仓库代码
+    - name: 拉取代码
+      uses: actions/checkout@v4
+
+    # 2. 设置 Python 环境（这里统一采用稳定的 3.12，避开 3.14 的 Pygame 字体死锁 Bug）
+    - name: 配置 Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # 3. 安装依赖库
+    - name: 安装依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        pip install -r requirements.txt
+
+    # 4. 使用 PyInstaller 编译打包
+    - name: 使用 PyInstaller 打包
+      run: |
+        pyinstaller --onefile --windowed --add-data "images${{ matrix.sep }}images" shark_invasion.py
+
+    # 5. 后期处理（重命名和 Linux 压缩）
+    - name: 优化产物文件
+      shell: bash
+      run: |
+        if [ "${{ matrix.os }}" = "windows-latest" ]; then
+          mv dist/shark_invasion.exe dist/${{ matrix.output_name }}
+        else
+          mv dist/shark_invasion dist/${{ matrix.output_name }}
+          tar -czf dist/Ship-vs-Shark-Linux.tar.gz -C dist ${{ matrix.output_name }}
+        fi
+
+    # 6. 自动将打包好的文件上传到触发此流程的 Release 页面中
+    - name: 上传到 Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ${{ matrix.file_to_upload }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
