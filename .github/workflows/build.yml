@@ -3,6 +3,7 @@ name: 自动编译并发布游戏发行版
 on:
   release:
     types: [published] # 点击发布 Release 时触发
+  workflow_dispatch:
 
 permissions:
   contents: write # 赋予该脚本往 Release 页面上传文件的权限
