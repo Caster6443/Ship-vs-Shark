@@ -1,5 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
+from utils import get_resource_path
 
 
 class Ship(Sprite):
@@ -12,7 +13,7 @@ class Ship(Sprite):
         self.settings = ai_game.settings
         self.screen_rect = ai_game.screen.get_rect()
         # 加载飞船图像并获取其外接矩形
-        self.image = pygame.image.load("images/ship.bmp")
+        self.image = pygame.image.load(get_resource_path("images/ship.bmp"))
         # 调整飞船尺寸
         self.image = pygame.transform.scale(self.image, (56, 72))
         self.rect = self.image.get_rect()

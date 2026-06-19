@@ -1,5 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
+from utils import get_resource_path
 
 
 class Shark(Sprite):
@@ -11,7 +12,7 @@ class Shark(Sprite):
         self.screen = ai_game.screen
         self.settings = ai_game.settings
         # 加载太空鲨图像并设置其rect属性
-        self.image = pygame.image.load("images/shark.png")
+        self.image = pygame.image.load(get_resource_path("images/shark.png"))
         self.image = pygame.transform.scale(self.image, (66, 106))
         self.rect = self.image.get_rect()
         # 每个太空鲨最初都在屏幕左上角生成

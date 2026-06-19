@@ -1,5 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
+from utils import get_resource_path
 
 
 # 类的继承 class 子类名(父类名):
@@ -15,7 +16,7 @@ class Bullet(Sprite):
         self.color = self.settings.bullet_color
 
         # 加载子弹图片并获取其外接矩形
-        self.image = pygame.image.load("images/bullet.png")
+        self.image = pygame.image.load(get_resource_path("images/bullet.png"))
         self.image = pygame.transform.scale(
             self.image, (self.settings.bullet_width, self.settings.bullet_height)
         )

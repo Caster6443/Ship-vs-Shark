@@ -8,6 +8,7 @@ from button import Button
 from ship import Ship
 from bullet import Bullet
 from shark import Shark
+from utils import get_resource_path
 
 
 class SharkInvasion:
@@ -28,7 +29,9 @@ class SharkInvasion:
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height)
         )
-        self.background = pygame.image.load("images/bg.png").convert()
+        self.background = pygame.image.load(
+            get_resource_path("images/bg.png")
+        ).convert()
         # 给窗口起名
         pygame.display.set_caption("Shark Invasion")
         # 创建一个用于存储游戏统计信息的实例
